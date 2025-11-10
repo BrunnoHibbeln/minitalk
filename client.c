@@ -6,7 +6,7 @@
 /*   By: bhibbeln <bhibbeln@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:06:02 by bhibbeln          #+#    #+#             */
-/*   Updated: 2025/10/30 14:52:38 by bhibbeln         ###   ########.fr       */
+/*   Updated: 2025/11/10 09:55:03 by bhibbeln         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static int	ft_atoi(const char *nptr)
 	return (num);
 }
 
-void	send_char(pid_t server_pid, char c)
+static void	send_char(pid_t server_pid, char c)
 {
 	int	i;
 
@@ -62,7 +62,7 @@ void	send_char(pid_t server_pid, char c)
 	}
 }
 
-void	send_str(pid_t server_pid, char *str)
+static void	send_str(pid_t server_pid, char *str)
 {
 	int	i;
 
