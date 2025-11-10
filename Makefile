@@ -1,24 +1,40 @@
-SRC = client.c server.c
-NAME = client server
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: bhibbeln <bhibbeln@student.42lisboa.com    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/11/10 11:49:40 by bhibbeln          #+#    #+#              #
+#    Updated: 2025/11/10 12:40:12 by bhibbeln         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-OBJ = $(SRC:.c=.o)
+NAME = client server
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+
+SRC = client.c server.c
+OBJS = $(SRC:.c=.o)
 
 all: $(NAME)
 
+MAKEFLAGS += -s
+
 client: client.o
-	cc -Wall -Werror -Wextra $< -o $@
+	@$(CC) $(CFLAGS) client.o -o client
+	@echo "✅ Client compiled"
 
 server: server.o
-	cc -Wall -Werror -Wextra $< -o $@
-
-%.o: %.c
-	cc -Wall -Werror -Wextra -c $< -o $@
-
+	@$(CC) $(CFLAGS) server.o -o server
+	@echo "✅ Server compiled"
 clean:
-	rm -rf $(OBJ)
-
+	@rm -rf $(OBJS)
+	@echo "✅ .o files deleted"
+	
 fclean: clean
-	rm -rf $(NAME)
+	@rm -rf $(NAME)
+	@echo "✅ client and server deleted"
 
 re: fclean all
 
