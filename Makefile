@@ -6,7 +6,7 @@
 #    By: bhibbeln <bhibbeln@student.42lisboa.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/10 11:49:40 by bhibbeln          #+#    #+#              #
-#    Updated: 2025/11/10 12:40:12 by bhibbeln         ###   ########.fr        #
+#    Updated: 2025/11/21 09:36:16 by bhibbeln         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,11 +30,11 @@ server: server.o
 	@echo "✅ Server compiled"
 clean:
 	@rm -rf $(OBJS)
-	@echo "✅ .o files deleted"
+	@echo "🗑 .o files deleted"
 	
 fclean: clean
 	@rm -rf $(NAME)
-	@echo "✅ client and server deleted"
+	@echo "🗑 client and server deleted"
 
 re: fclean all
 

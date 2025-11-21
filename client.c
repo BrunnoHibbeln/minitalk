@@ -6,20 +6,11 @@
 /*   By: bhibbeln <bhibbeln@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:06:02 by bhibbeln          #+#    #+#             */
-/*   Updated: 2025/11/10 09:55:03 by bhibbeln         ###   ########.fr       */
+/*   Updated: 2025/11/21 13:53:53 by bhibbeln         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
-
-static void	ft_usleep(int microseconds)
-{
-	struct timespec	ts;
-
-	ts.tv_sec = microseconds / 1000000;
-	ts.tv_nsec = (microseconds % 1000000) * 1000;
-	nanosleep(&ts, NULL);
-}
 
 static int	ft_atoi(const char *nptr)
 {
@@ -47,10 +38,21 @@ static int	ft_atoi(const char *nptr)
 	return (num);
 }
 
+static void	sig_confirm(int sig) //Define a static function that takes in an integer representing a signal, and acknowledges reciept upon receiving it
+{
+	if (sig == SIGUSR2)
+		write(1, "Message received\n", 18);/* 
+	else //If SIGUSR2
+		write(1, "Message received\n", 18);  */
+}
+
 static void	send_char(pid_t server_pid, char c)
 {
-	int	i;
+	int				i;
+	struct timespec	ts;
 
+	ts.tv_sec = 0;
+	ts.tv_nsec = 400 * 1000;
 	i = 8;
 	while (i--)
 	{
@@ -58,7 +60,7 @@ static void	send_char(pid_t server_pid, char c)
 			kill(server_pid, SIGUSR2);
 		else
 			kill(server_pid, SIGUSR1);
-		ft_usleep(300);
+		usleep(400);
 	}
 }
 
@@ -69,6 +71,7 @@ static void	send_str(pid_t server_pid, char *str)
 	i = 0;
 	while (str[i])
 	{
+		signal(SIGUSR2, sig_confirm);
 		send_char(server_pid, str[i]);
 		i++;
 	}
@@ -76,18 +79,20 @@ static void	send_str(pid_t server_pid, char *str)
 	send_char(server_pid, '\0');
 }
 
-int	main(int argc, char *argv[])
+int	main(int ac, char **av)
 {
 	pid_t	server_pid;
 	char	*str;
-
-	if (argc != 3)
+	if (ac == 3)
 	{
-		write(2, "Required 2 arguments (Server PID) and (String)\n", 47);
+		str = av[2];
+		server_pid = ft_atoi(av[1]);
+		send_str(server_pid, str);
+	}
+	else
+	{
+		write(2, "try: ./client <Server PID> <Message>\n", 38);
 		return (1);
 	}
-	str = argv[2];
-	server_pid = ft_atoi(argv[1]);
-	send_str(server_pid, str);
 	return (0);
 }
