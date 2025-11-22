@@ -6,7 +6,7 @@
 /*   By: bhibbeln <bhibbeln@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 20:01:32 by bhibbeln          #+#    #+#             */
-/*   Updated: 2025/11/21 12:11:52 by bhibbeln         ###   ########.fr       */
+/*   Updated: 2025/11/22 11:23:04 by bhibbeln         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,10 @@ void	signal_handler(int signum, siginfo_t *info, void *context)
 	if (bit == 8)
 	{
 		if (c == '\0')
+		{
 			write(1, "\n", 1);
+			kill(info->si_pid, SIGUSR1);
+		}
 		else
 			write(1, &c, 1);
 		bit = 0;
@@ -64,16 +67,16 @@ int	main(int ac, char **av)
 		sa.sa_sigaction = signal_handler;
 		sa.sa_flags = SA_SIGINFO;
 		sigemptyset(&sa.sa_mask);
-		sigaction(SIGUSR1, &sa, NULL);
-		sigaction(SIGUSR2, &sa, NULL);
 		while (1)
 		{
+			sigaction(SIGUSR1, &sa, NULL);
+			sigaction(SIGUSR2, &sa, NULL);
 			pause();
 		}
 	}
 	else
 	{
-		write(2, "try: ./server\n", 15);
+		ft_printf("try: ./server\n");
 		return (1);
 	}
 	return (0);

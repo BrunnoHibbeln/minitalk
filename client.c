@@ -6,7 +6,7 @@
 /*   By: bhibbeln <bhibbeln@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:06:02 by bhibbeln          #+#    #+#             */
-/*   Updated: 2025/11/21 13:53:53 by bhibbeln         ###   ########.fr       */
+/*   Updated: 2025/11/22 11:35:04 by bhibbeln         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,21 +38,20 @@ static int	ft_atoi(const char *nptr)
 	return (num);
 }
 
-static void	sig_confirm(int sig) //Define a static function that takes in an integer representing a signal, and acknowledges reciept upon receiving it
+static void	sig_confirm(int sig)
 {
+	static int	count = 0;
+
 	if (sig == SIGUSR2)
-		write(1, "Message received\n", 18);/* 
-	else //If SIGUSR2
-		write(1, "Message received\n", 18);  */
+		count++;
+	else if (sig == SIGUSR1)
+		ft_printf("%d Characters acknowledged!\n", count);
 }
 
 static void	send_char(pid_t server_pid, char c)
 {
-	int				i;
-	struct timespec	ts;
+	int	i;
 
-	ts.tv_sec = 0;
-	ts.tv_nsec = 400 * 1000;
 	i = 8;
 	while (i--)
 	{
@@ -72,10 +71,10 @@ static void	send_str(pid_t server_pid, char *str)
 	while (str[i])
 	{
 		signal(SIGUSR2, sig_confirm);
+		signal(SIGUSR1, sig_confirm);
 		send_char(server_pid, str[i]);
 		i++;
 	}
-	send_char(server_pid, '\n');
 	send_char(server_pid, '\0');
 }
 
@@ -83,6 +82,7 @@ int	main(int ac, char **av)
 {
 	pid_t	server_pid;
 	char	*str;
+
 	if (ac == 3)
 	{
 		str = av[2];
@@ -91,7 +91,7 @@ int	main(int ac, char **av)
 	}
 	else
 	{
-		write(2, "try: ./client <Server PID> <Message>\n", 38);
+		ft_printf("try: ./client <Server PID> <Message>\n");
 		return (1);
 	}
 	return (0);
