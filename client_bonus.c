@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.c                                           :+:      :+:    :+:   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bhibbeln <bhibbeln@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/30 12:06:02 by bhibbeln          #+#    #+#             */
-/*   Updated: 2025/11/28 18:01:52 by bhibbeln         ###   ########.fr       */
+/*   Updated: 2025/11/28 18:31:08 by bhibbeln         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,18 +38,33 @@ static int	ft_atoi(const char *nptr)
 	return (num);
 }
 
+static void	acknowledgement(int sig)
+{
+	static int	signals = 0;
+
+	if (sig == SIGUSR2)
+		signals++;
+	else if (sig == SIGUSR1)
+	{
+		--signals;
+		ft_printf("\n%d Signals acknowledged!\n", (signals * 8));
+		ft_printf("(%d Characters)\n", signals);
+	}
+}
+
 static void	send_char(pid_t server_pid, char c)
 {
-	int	i;
+	int	bit;
 
-	i = 8;
-	while (i--)
+	bit = 7;
+	while (bit >= 0)
 	{
-		if ((c >> i) & 1)
+		if ((c >> bit) & 1)
 			kill(server_pid, SIGUSR2);
 		else
 			kill(server_pid, SIGUSR1);
 		usleep(300);
+		--bit;
 	}
 }
 
@@ -60,6 +75,8 @@ static void	send_str(pid_t server_pid, char *str)
 	i = 0;
 	while (str[i])
 	{
+		signal(SIGUSR2, acknowledgement);
+		signal(SIGUSR1, acknowledgement);
 		send_char(server_pid, str[i]);
 		i++;
 	}
